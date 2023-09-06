@@ -9,27 +9,38 @@ import { filteredTodoListState, selectedDateState, todoListState } from '../Todo
 import { getSimpleDateFormat } from '../../utils/date';
 
   
-  const TodoStatisticsModal= () => {
-
+const TodoStatisticsModal = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [todo, setTodo] = useState<string>('');
   const [todoList, setTodoList] = useRecoilState(todoListState);
-
   const selectedDate = useRecoilValue(selectedDateState);
   const [isOpen, setIsOpen] = useRecoilState(todoStatisticsModalOpenState);
 
-  const reset = () => {
-    setTodo('');
-    inputRef.current?.focus();
+  const filteredTodoList = useRecoilValue(filteredTodoListState(selectedDate));
+  const statistics = useRecoilValue(todoStatisticsState(selectedDate));
+
+  // 모달을 닫는 함수
+  const handleClose = () => setIsOpen(false);
+
+  // 할 일 삭제 함수
+  const removeTodo = (id: string): void => {
+    setTodoList(todoList.filter(todo => todo.id !== id));
   }
 
+  // 입력된 할 일을 추가하는 함수
   const addTodo = useRecoilCallback(({ snapshot, set }) => () => {
+    // todoListState 값을 snapshot으로부터 가져오는 것을 최적화
     const todoList = snapshot.getLoadable(todoListState).getValue();
 
     const newTodo = { id: uuidv4(), content: todo, done: false, date: selectedDate };
 
     set(todoListState, [...todoList, newTodo]);
-  }, [todo, selectedDate, todoList]);
+  }, [todo, selectedDate]);
+
+  const reset = () => {
+    setTodo('');
+    inputRef.current?.focus();
+  }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -42,41 +53,25 @@ import { getSimpleDateFormat } from '../../utils/date';
     setTodo(e.target.value);
   }
 
-  
-
-  const filteredTodoList = useRecoilValue(filteredTodoListState(selectedDate));
-  const statistics = useRecoilValue(todoStatisticsState(selectedDate));
-
-  
-  // 모달을 닫는 함수
-  const handleClose = () => setIsOpen(false);
-
-  // 할 일 삭제 함수
-  const removeTodo = (id: string): void => {
-    setTodoList(todoList.filter(todo => todo.id !== id));
-  }
-
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
       <Container>
         <Card>
           <Date>{getSimpleDateFormat(selectedDate)}</Date>
           <Statistics>할 일 {statistics.total - statistics.done}개 남음</Statistics>
-          <AddTodo ref={inputRef} onKeyPress={handleKeyPress} value={todo} onChange={handleChange}/>
+          <AddTodo ref={inputRef} onKeyPress={handleKeyPress} value={todo} onChange={handleChange} />
           <TodoList>
-            {
-              filteredTodoList?.map(todo => (
-                <TodoItem key={todo.id}>
-                  <Content>{todo.content}</Content>
-                  {/* 할 일 삭제 버튼 */}
-                  <TodoActions>
-                    <TodoActionButton secondary onClick={() => removeTodo(todo.id)}>
-                      <HiOutlineTrash />
-                    </TodoActionButton>
-                  </TodoActions>
-                </TodoItem>
-              ))
-            }
+            {filteredTodoList?.map(todo => (
+              <TodoItem key={todo.id}>
+                <Content>{todo.content}</Content>
+                {/* 할 일 삭제 버튼 */}
+                <TodoActions>
+                  <TodoActionButton secondary onClick={() => removeTodo(todo.id)}>
+                    <HiOutlineTrash />
+                  </TodoActionButton>
+                </TodoActions>
+              </TodoItem>
+            ))}
           </TodoList>
         </Card>
       </Container>
