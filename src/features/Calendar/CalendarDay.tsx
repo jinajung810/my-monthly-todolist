@@ -74,7 +74,10 @@ const TableData = styled.td`
   position: relative;
   background-color: rgba(255, 255, 255, .1);
   
-  // border: 1px solid rgba(255, 255, 255, .2);
+  border: 1px solid rgba(255, 255, 255, .2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const Container = styled.div``;
