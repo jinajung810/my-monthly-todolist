@@ -1,37 +1,44 @@
 import React from 'react';
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from '@emotion/styled/macro';
-
 import TodoList from '../TodoList';
-
 import { filteredTodoListState, selectedDateState } from '../TodoList/atom';
+import { todoStatisticsModalOpenState } from '../TodoStatisticsModal/atom';
 import { isSameDay } from '../../utils/date';
 
-import { todoStatisticsModalOpenState } from '../TodoStatisticsModal/atom';
 
 interface Props {
   date: Date;
 }
 
-const CalendarDay: React.FC<Props> = ({ date }) => {
+const CalendarDay = ({ date }:Props) => {
+  // 현재 날짜 가져오기
   const today = new Date();
 
+  // 선택된 날짜 상태
   const selectedDate = useRecoilValue(selectedDateState);
-  const todoList = useRecoilValue(filteredTodoListState(date));
 
+  // 선택된 날짜를 설정하는 함수
   const setSelectedDate = useSetRecoilState(selectedDateState);
 
-  const setTodoStatisticsModalOpen = useSetRecoilState(todoStatisticsModalOpenState);
-
-
-
+  // 선택된 날짜 변경 핸들러
   const handleDateSelect = (d: number) => {
+     // 선택된 날짜 업데이트
     setSelectedDate(new Date(selectedDate.setDate(d)));
   }
 
+  // 날짜에 따른 필터링된 Todo 목록 상태
+  const todoList = useRecoilValue(filteredTodoListState(date));
+
+  // 통계 모달 열기 함수 
+  const setTodoStatisticsModalOpen = useSetRecoilState(todoStatisticsModalOpenState);
+
+  // 통계 모달 열기 핸들러
   const handleTodoStatisticsModalOpen = (event: React.SyntheticEvent<HTMLDivElement>) => {
+    // 이벤트 버블링 방지
     event.stopPropagation();
 
+    // 통계 모달 열기
     setTodoStatisticsModalOpen(true);
   }
 
@@ -66,7 +73,11 @@ const TableData = styled.td`
   padding: 8px;
   position: relative;
   background-color: rgba(255, 255, 255, .1);
+  
+  // border: 1px solid rgba(255, 255, 255, .2);
 `;
+
+const Container = styled.div``;
 
 const DisplayDate = styled.div<{ isToday?: boolean; isSelected?: boolean; }>`
   color: ${({ isToday }) => isToday && '#F8F7FA'};
@@ -83,5 +94,3 @@ const DisplayDate = styled.div<{ isToday?: boolean; isSelected?: boolean; }>`
   height: 26px;
   cursor: pointer;
 `;
-
-const Container = styled.div``;

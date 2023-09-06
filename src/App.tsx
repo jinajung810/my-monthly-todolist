@@ -4,7 +4,7 @@ import styled from '@emotion/styled/macro';
 import { RecoilRoot } from 'recoil';
 
 import Calendar from './features/Calendar';
-import TodoFormModal from './features/TodoFormModal';
+import TodoFormModal from './features/TodoForm';
 import TodoStatisticsModal from './features/TodoStatisticsModal';
 
 const globalStyle = css`

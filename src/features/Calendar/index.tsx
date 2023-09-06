@@ -1,24 +1,23 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { BiChevronLeft, BiChevronRight } from 'react-icons/bi'
 import styled from '@emotion/styled/macro';
-
-import { selectedDateState, selectedTodoState, todoListState } from '../TodoList/atom';
 import CalendarDay from "./CalendarDay";
+import { selectedDateState, selectedTodoState, todoListState } from '../TodoList/atom';
 
 
 const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
-const MONTHS = ["January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-];
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
 
-const Calendar: React.FC = () => {
+const Calendar = () => {
+  // 선택된 날짜 상태
   const selectedDate = useRecoilValue(selectedDateState);
-  const todoList = useRecoilValue(todoListState);
 
+  // 선택된 날짜 설정 함수
   const setSelectedDate = useSetRecoilState(selectedDateState);
 
+  // 선택된 날짜의 연도, 월, 첫날, 마지막날 계산
   const { year, month, firstDay, lastDay } = useMemo(() => {
     const year = selectedDate.getFullYear();
     const month = selectedDate.getMonth();
@@ -33,16 +32,20 @@ const Calendar: React.FC = () => {
     })
   }, [selectedDate]);
 
+  // 이전 월로 이동하는 핸들러
   const handleGoTo = (d: Date) => {
     setSelectedDate(d);
   }
 
+  // 날짜 테이블에서 날짜 전에 빈 칸을 채우는 함수
   const pad = () => [...Array(firstDay.getDay()).keys()].map((p: number) => <TableData key={`pad_${p}`} />);
 
+  // 날짜 범위를 생성하는 함수
   const range = () => [...Array(lastDay.getDate()).keys()].map((d: number) => (
     <CalendarDay key={d} date={new Date(year, month, d + 1)} />
   ));
 
+  // 달력 날짜를 렌더링하는 함수
   const renderDays = () => {
     const items = [...pad(), ...range()];
 
@@ -55,6 +58,10 @@ const Calendar: React.FC = () => {
     ));
   }
 
+  // 투두 목록 상태
+  const todoList = useRecoilValue(todoListState);
+
+  // 선택된 Todo를 삭제하는 Recoil 콜백
   const removeTodo = useRecoilCallback(({ snapshot, set }) => () => {
     const todoList = snapshot.getLoadable(todoListState).getValue();
     const selectedTodo = snapshot.getLoadable(selectedTodoState).getValue();
@@ -62,6 +69,7 @@ const Calendar: React.FC = () => {
     set(todoListState, todoList.filter(todo => todo.id !== selectedTodo?.id));
   }, [selectedDate, todoList]);
 
+  // 백스페이스 키를 눌렀을 때 선택된 Todo 삭제
   useEffect(() => {
     const onBackspaceKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Backspace') {
@@ -80,15 +88,22 @@ const Calendar: React.FC = () => {
     <Base>
       <Header>
         <ButtonContainer>
+          {/* 이전 월로 이동하는 버튼 */}
           <ArrowButton pos="left" onClick={() => handleGoTo(new Date(selectedDate.setMonth(selectedDate.getMonth() - 1)))}>
             <BiChevronLeft />
           </ArrowButton>
+
+          {/* 다음 월로 이동하는 버튼 */}
           <Title>{`${MONTHS[month]} ${year}`}</Title>
+
+          {/* 다음 월로 이동하는 버튼 */}
           <ArrowButton pos="right" onClick={() => handleGoTo(new Date(selectedDate.setMonth(selectedDate.getMonth() + 1)))}>
             <BiChevronRight />
           </ArrowButton>
         </ButtonContainer>
       </Header>
+
+      {/* 달력 테이블 */}
       <Table>
         <TableHeader>
           <tr>
@@ -116,6 +131,12 @@ const Header = styled.div`
   align-items: center;
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 const Title = styled.h1`
   margin: 0;
   padding: 8px 24px;
@@ -133,12 +154,6 @@ const ArrowButton = styled.button<{ pos: 'left' | 'right' }>`
   font-size: 18px;
   cursor: pointer;
   color: #F8F7FA;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `;
 
 const Table = styled.table`
@@ -170,13 +185,6 @@ const TableBody = styled.tbody`
   }
 `;
 
-const TableData = styled.td`
-  text-align: center;
-  color: #C9C8CC;
-  padding: 8px;
-  position: relative;
-`;
-
 const Base = styled.div`
   min-width: 900px;
   display: flex;
@@ -192,3 +200,9 @@ const Base = styled.div`
   }
 `;
 
+const TableData = styled.td`
+  text-align: center;
+  color: #C9C8CC;
+  padding: 8px;
+  position: relative;
+`;
