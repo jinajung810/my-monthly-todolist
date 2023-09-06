@@ -2,6 +2,8 @@ import { useRef, useState } from 'react'
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil'
 import { v4 as uuidv4} from 'uuid';
 import { HiOutlineTrash } from 'react-icons/hi';
+import { BsPencil } from 'react-icons/bs';
+import { AiOutlineCheck, AiOutlineClose } from 'react-icons/ai';
 import styled from '@emotion/styled/macro';
 import { todoStatisticsModalOpenState, todoStatisticsState } from './atom';
 import Modal from '../../components/Modal';
@@ -12,6 +14,9 @@ import { getSimpleDateFormat } from '../../utils/date';
 const TodoStatisticsModal = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [todo, setTodo] = useState<string>('');
+
+  // 수정 중인 할 일의 ID를 저장
+  const [editingTodoId, setEditingTodoId] = useState<string | null>(null); 
   const [todoList, setTodoList] = useRecoilState(todoListState);
   const selectedDate = useRecoilValue(selectedDateState);
   const [isOpen, setIsOpen] = useRecoilState(todoStatisticsModalOpenState);
@@ -29,12 +34,10 @@ const TodoStatisticsModal = () => {
 
   // 입력된 할 일을 추가하는 함수
   const addTodo = useRecoilCallback(({ snapshot, set }) => () => {
-    // todoListState 값을 snapshot으로부터 가져오는 것을 최적화
     const todoList = snapshot.getLoadable(todoListState).getValue();
-
     const newTodo = { id: uuidv4(), content: todo, done: false, date: selectedDate };
-
     set(todoListState, [...todoList, newTodo]);
+    reset();
   }, [todo, selectedDate]);
 
   const reset = () => {
@@ -42,10 +45,56 @@ const TodoStatisticsModal = () => {
     inputRef.current?.focus();
   }
 
+  // EditMode 상태를 추가하고 초기값을 false로 설정합니다.
+  const [editMode, setEditMode] = useState<boolean>(false);
+
+  // 수정 버튼을 클릭하여 할 일 수정 모드를 시작
+  const startEditTodo = (id: string) => {
+    setEditingTodoId(id);
+    const todoToEdit = todoList.find(todo => todo.id === id);
+    if (todoToEdit) {
+      setTodo(todoToEdit.content);
+    } 
+    // EditMode를 true로 설정하여 수정 모드로 전환합니다.
+    setEditMode(true);
+  }
+
+  // 수정된 할 일을 저장
+  const saveEditedTodo = () => {
+    if (editingTodoId) {
+      const updatedTodoList = todoList.map(todoItem => {
+        if (todoItem.id === editingTodoId) {
+          return { ...todoItem, content: todo };
+        }
+        return todoItem;
+      });
+      setTodoList(updatedTodoList);
+      setEditingTodoId(null);
+      reset();
+    }
+    setEditMode(false); // 수정 모드 종료
+  }
+  // 수정 중인 할 일 입력 필드에서 엔터 키를 누를 때 호출되는 함수
+  const handleEditKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      saveEditedTodo(); // 엔터 키를 누를 때 수정된 내용을 저장
+    }
+  }
+  // 수정 취소
+  const cancelEditTodo = () => {
+    setEditingTodoId(null);
+    reset();
+    setEditMode(false); // 수정 모드 종료
+  }
+
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      addTodo();
-      reset();
+      if (editingTodoId) {
+        // 수정 중인 할 일이 있다면 수정 완료 처리
+        saveEditedTodo();
+      } else {
+        addTodo();
+      }
     }
   }
 
@@ -59,24 +108,51 @@ const TodoStatisticsModal = () => {
         <Card>
           <Date>{getSimpleDateFormat(selectedDate)}</Date>
           <Statistics>할 일 {statistics.total - statistics.done}개 남음</Statistics>
-          <AddTodo ref={inputRef} onKeyPress={handleKeyPress} value={todo} onChange={handleChange} />
+          <AddTodo
+            ref={inputRef}
+            onKeyPress={handleKeyPress}
+            value={editMode ? '' : todo} // EditMode일 때는 빈 값, 그 외에는 todo 값을 표시
+            onChange={handleChange}
+          />
           <TodoList>
-            {filteredTodoList?.map(todo => (
-              <TodoItem key={todo.id}>
-                <Content>{todo.content}</Content>
-                {/* 할 일 삭제 버튼 */}
-                <TodoActions>
-                  <TodoActionButton secondary onClick={() => removeTodo(todo.id)}>
-                    <HiOutlineTrash />
-                  </TodoActionButton>
-                </TodoActions>
+            {filteredTodoList?.map(todoItem => (
+              <TodoItem key={todoItem.id}>
+                {editingTodoId === todoItem.id ? (
+                  <>
+                    <EditMode
+                      type="text"
+                      value={todo}
+                      onChange={handleChange}
+                      onKeyPress={handleEditKeyPress} // 엔터 키 이벤트 처리를 위한 이벤트 핸들러 추가
+                      autoFocus // 수정 버튼을 누르면 자동으로 input에 포커스가 가도록 설정
+                    />
+                    <TodoActionEdit onClick={saveEditedTodo}>
+                      <AiOutlineCheck />
+                    </TodoActionEdit>
+                    <TodoActionEdit onClick={cancelEditTodo}>
+                      <AiOutlineClose />
+                    </TodoActionEdit>
+                  </>
+                ) : (
+                  <>
+                    <Content>{todoItem.content}</Content>
+                    <TodoActions>
+                      <TodoActionEdit onClick={() => startEditTodo(todoItem.id)}>
+                        <BsPencil />
+                      </TodoActionEdit>
+                      <TodoActionDelete onClick={() => removeTodo(todoItem.id)}>
+                        <HiOutlineTrash />
+                      </TodoActionDelete>
+                    </TodoActions>
+                  </>
+                )}
               </TodoItem>
             ))}
           </TodoList>
         </Card>
       </Container>
     </Modal>
-  )
+  );
 }
 
 export default TodoStatisticsModal;
@@ -120,18 +196,39 @@ const TodoItem = styled.li`
   border-radius: 8px;
 `;
 
+const EditMode = styled.input`
+  border: none;
+  outline: none;
+  background: none;
+  width:100%;
+  color: #C9C8CC;
+  caret-color: #00bfff;
+  font-size: 15px;
+  padding: 2px 0px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #C9C8CC;
+`
 const Content = styled.span`
-  flex: 1 0 95%;
+  flex: 1 0 85%;
 `;
 
 const TodoActions = styled.span`
-  flex: 1 0 5%;
+  flex: 1 0 15%;
+  display: flex;
 `;
 
-const TodoActionButton = styled.button<{ secondary?: boolean; }>`
+const TodoActionEdit = styled.button`
+border: none;
+background-color: transparent;
+color: #00bfff;
+cursor: pointer;
+font-size: 12px;
+`
+
+const TodoActionDelete = styled.button`
   border: none;
   background-color: transparent;
-  color: ${({ secondary }) => secondary && '#ff6b6b'};
+  color:#ff6b6b;
   cursor: pointer;
 `;
 

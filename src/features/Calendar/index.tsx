@@ -170,7 +170,7 @@ const TableHeader = styled.thead`
       padding-block: 12px;
       font-weight: normal;
       color: #F8F7FA;
-      background-color: rgba(255, 255, 255, .1);
+      // background-color: rgba(255, 255, 255, .1);
     }
   }
 `;
