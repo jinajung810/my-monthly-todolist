@@ -8,7 +8,7 @@ interface Props {
   items: Array<Todo>;
 }
 
-const MAX_TODO_LIST_LENGTH = 4;
+const MAX_TODO_LIST_LENGTH = 6;
 
 const TodoList = ({ items }:Props) => {
   // 선택된 할일을 가져옴
@@ -63,29 +63,31 @@ export default TodoList;
 
 
 const TodoItem = styled.li<{ done?: boolean; selected?: boolean; }>`
-  max-width: 100px;
+  max-width: 124px;
+  text-align: left;
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-  background-color: ${({ done, selected }) => selected ? 'rgba(112, 71, 235, 1)' : done ? 'transparent' :  'rgba(112, 71, 235, 0.4)'};
-  padding: 2px 4px;
+  background-color: ${({ done, selected }) => selected ? '#C9C8CC' : done ? 'transparent' :  ''};
+  padding: 2px 6px;
   margin: 0;
-  border-radius: 8px;
-  font-size: 10px;
+  border-radius: 2px;
+  font-size: 14px;
   text-decoration: ${({ done }) => done && 'line-through'};
   cursor: pointer;
 `;
 
 const EtcItem = styled.li`
   padding: 2px 4px;
+  box-sizing: border-box;
   margin: 0;
-  font-size: 10px;
+  font-size: 12px;
   cursor: pointer;
 `;
 
 const Base = styled.ul`
   list-style: none;
-  margin: 15px 0 0 0;
+  // margin: 20px 0 0 0;
   padding: 0;
   width: 100%;
   height: 60px;

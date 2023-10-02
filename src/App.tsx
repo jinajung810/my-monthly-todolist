@@ -8,7 +8,7 @@ import TodoStatisticsModal from './features/TodoStatisticsModal';
 
 const globalStyle = css`
   html, body {
-    background-color: #19181A;
+    // background-color: #19181A;
     margin: 0;
     font-family: sans-serif, serif, "Apple SD Gothic Neo";
   }
