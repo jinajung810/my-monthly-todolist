@@ -29,7 +29,7 @@ export default Modal;
 
 const Overlay = styled.div` //블러 배경효과 
   position: fixed;
-  z-index: 99;
+  z-index: 10;
   top: 0;
   right: 0;
   bottom: 0;
@@ -49,7 +49,7 @@ const Dim = styled.div` // 배경을 클릭하면 모달이 닫힘
 `;
 
 const Container = styled.div` // 모달 내용을 포함하는 컨테이너 
-  max-width: 456px;
+  max-width: 390px;
   position: relative;
   width: 100%;
 `;

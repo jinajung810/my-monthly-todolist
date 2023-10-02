@@ -93,7 +93,6 @@ const Calendar = () => {
             <BiChevronLeft />
           </ArrowButton>
 
-          {/* 다음 월로 이동하는 버튼 */}
           <Title>{`${MONTHS[month]} ${year}`}</Title>
 
           {/* 다음 월로 이동하는 버튼 */}
@@ -143,7 +142,6 @@ const Title = styled.h1`
   font-size: 24px;
   font-weight: normal;
   text-align: center;
-  color: #F8F7FA;
 `;
 
 const ArrowButton = styled.button<{ pos: 'left' | 'right' }>`
@@ -151,26 +149,22 @@ const ArrowButton = styled.button<{ pos: 'left' | 'right' }>`
   border-radius: 4px;
   padding: 8px 12px;
   background-color: transparent;
-  font-size: 18px;
+  font-size: 25px;
   cursor: pointer;
-  color: #F8F7FA;
 `;
 
 const Table = styled.table`
-  border-collapse: collapse;
   width: 100%;
   height: 100%;
-  border-spacing: 0;
+  border-spacing: 10px;
 `;
 
 const TableHeader = styled.thead`
   padding-block: 12px;
   > tr {
     > th {
-      padding-block: 12px;
+      padding-block: 22px;
       font-weight: normal;
-      color: #F8F7FA;
-      // background-color: rgba(255, 255, 255, .1);
     }
   }
 `;
@@ -179,14 +173,14 @@ const TableBody = styled.tbody`
   > tr {
     > td {
       width: 128px;
-      height: 128px;
+      height: 200px;
       box-sizing: border-box;
     }
   }
 `;
 
 const Base = styled.div`
-  min-width: 900px;
+  min-width: 1200px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -194,7 +188,6 @@ const Base = styled.div`
   padding: 24px;
   height: 100%;
   box-sizing: border-box;
-  background-color: #28272A;
   ${Header} + ${Table} {
     margin-top: 36px;
   }
@@ -202,7 +195,6 @@ const Base = styled.div`
 
 const TableData = styled.td`
   text-align: center;
-  color: #C9C8CC;
   padding: 8px;
   position: relative;
 `;

@@ -69,22 +69,23 @@ export default CalendarDay;
 
 const TableData = styled.td`
   text-align: center;
-  color: #C9C8CC;
   padding: 8px;
   position: relative;
-  background-color: rgba(255, 255, 255, .1);
-  
-  border: 1px solid rgba(255, 255, 255, .2);
+  border-top: 1px solid #313133;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
-const Container = styled.div``;
+const Container = styled.div`
+  margin-top: 20px;
+  height: 150px;
+  width:128px;
+`;
 
 const DisplayDate = styled.div<{ isToday?: boolean; isSelected?: boolean; }>`
   color: ${({ isToday }) => isToday && '#F8F7FA'};
-  background-color: ${({ isToday, isSelected }) => isSelected ? '#7047EB' : isToday ? '#313133' : ''};
+  background-color: ${({ isToday, isSelected }) => isSelected ? '#C9C8CC' : isToday ? '#313133' : ''};
   display: flex;
   justify-content: center;
   align-items: center;

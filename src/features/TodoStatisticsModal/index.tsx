@@ -127,10 +127,10 @@ const TodoStatisticsModal = () => {
                       autoFocus // 수정 버튼을 누르면 자동으로 input에 포커스가 가도록 설정
                     />
                     <TodoActionEdit onClick={saveEditedTodo}>
-                      <AiOutlineCheck />
+                      <AiOutlineCheck size='15'/>
                     </TodoActionEdit>
                     <TodoActionEdit onClick={cancelEditTodo}>
-                      <AiOutlineClose />
+                      <AiOutlineClose size='15' />
                     </TodoActionEdit>
                   </>
                 ) : (
@@ -138,10 +138,10 @@ const TodoStatisticsModal = () => {
                     <Content>{todoItem.content}</Content>
                     <TodoActions>
                       <TodoActionEdit onClick={() => startEditTodo(todoItem.id)}>
-                        <BsPencil />
+                        <BsPencil size='15' />
                       </TodoActionEdit>
                       <TodoActionDelete onClick={() => removeTodo(todoItem.id)}>
-                        <HiOutlineTrash />
+                        <HiOutlineTrash size='18' />
                       </TodoActionDelete>
                     </TodoActions>
                   </>
@@ -159,17 +159,17 @@ export default TodoStatisticsModal;
 
 const Container = styled.div`
   width: 100vw;
-  max-width: 386px;
-  padding: 8px;
+  max-width: 390px;
+  // padding: 8px;
 `;
 
 const Date = styled.small`
   display: block;
-  color: #C9C8CC;
+  color: #313133;
 `;
 
 const Statistics = styled.p`
-  color: #7047EB;
+  color: #3868d9;
   font-size: 16px;
   font-weight: bold;
 `;
@@ -180,8 +180,8 @@ const AddTodo = styled.input`
   background: none;
   width:100%;
   border-bottom: 1px solid #fff;
-  color: #C9C8CC;
-  caret-color: #C9C8CC;
+  color: #313133;
+  caret-color: #313133;
   font-size: 15px;
   padding: 5px 5px;
   box-sizing: border-box;
@@ -191,7 +191,7 @@ const AddTodo = styled.input`
 const TodoItem = styled.li`
   width: 100%;
   display: flex;
-  color: #C9C8CC;
+  color: #313133;
   align-items: center;
   border-radius: 8px;
 `;
@@ -201,15 +201,15 @@ const EditMode = styled.input`
   outline: none;
   background: none;
   width:100%;
-  color: #C9C8CC;
-  caret-color: #00bfff;
+  color: #313133;
+  caret-color: #7047EB;
   font-size: 15px;
   padding: 2px 0px;
   box-sizing: border-box;
-  border-bottom: 1px solid #C9C8CC;
+  border-bottom: 1px solid #fff;
 `
 const Content = styled.span`
-  flex: 1 0 85%;
+  flex: 1 0 83%;
 `;
 
 const TodoActions = styled.span`
@@ -220,9 +220,8 @@ const TodoActions = styled.span`
 const TodoActionEdit = styled.button`
 border: none;
 background-color: transparent;
-color: #00bfff;
+color: #7047EB;
 cursor: pointer;
-font-size: 12px;
 `
 
 const TodoActionDelete = styled.button`
@@ -244,12 +243,12 @@ const TodoList = styled.ul`
 
 const Card = styled.div`
   width: 100%;
-  max-width: 370px;
+  max-width: 390px;
   border-radius: 16px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   padding: 24px;
   box-sizing: border-box;
-  background-color: #19181A;
+  background-color: #C9C8CC;
   ${Date} + ${TodoList} {
     margin-top: 24px;
   }
