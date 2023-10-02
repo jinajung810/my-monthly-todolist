@@ -117,6 +117,17 @@ const Calendar = () => {
           {renderDays()}
         </TableBody>
       </Table>
+      <Footer>
+        <Link href='https://github.com/jinajung810/my-monthly-todolist' target="_blank">
+          GitHub Repository
+        </Link>
+        &nbsp;・&nbsp;
+        <Link href='https://mail.google.com/mail/?view=cm&fs=1&to=jjina810@gmail.com' target="_blank">Contact Me!</Link>
+        &nbsp;・&nbsp;
+        <span>{new Date().getFullYear()}</span>
+        &nbsp;&nbsp;
+        <span>Jina Jung</span>
+      </Footer>
     </Base>
   )
 }
@@ -198,3 +209,19 @@ const TableData = styled.td`
   padding: 8px;
   position: relative;
 `;
+
+const Footer = styled.div`
+  width:100%;
+  text-align: center;
+  border-top: 1px solid #313133;
+  padding: 30px;
+`
+
+const Link = styled.a`
+  text-decoration: none;
+  color: #313133;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`
